@@ -1,24 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext, useEffect, useState } from "react";
+import { Welcome, Container, ContainerButton } from "./App.style";
+import Search from "./components/Search";
+import List from "./components/List";
+import Button from "./components/Button";
+import { PeopleContext } from "./contexts/PeopleContext";
 
-function App() {
+const App = () => {
+  const { peoples, getPeoples, setDetailPeople } = useContext(PeopleContext);
+  const [search, setSearch] = useState(null);
+
+  useEffect(() => {
+    if (!peoples) getPeoples();
+  });
+
+
+  const searchName = (term) => {
+    const result = peoples.filter((item) => item.name.toLowerCase().includes(term.toLowerCase()));
+    setSearch(result);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ContainerButton>
+        <Button page={"planetas"} />
+        <Button page={"naves"} />
+      </ContainerButton>
+      <Welcome>
+        <header>Not so long time ago, in a galaxy not so far away...</header>
+      </Welcome>
+      <Container>
+        <Search searchName={searchName}></Search>
+        {peoples ? (<List items={search ? search : peoples} setDetailItem={setDetailPeople} detailPage={"peopledetalhes"}></List>) : null}
+      </Container>
+    </>
   );
 }
 
